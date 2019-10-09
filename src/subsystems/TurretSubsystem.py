@@ -3,21 +3,51 @@ Created on Oct 3, 2019
 
 @author: Valen Yamamoto
 '''
-import externals.Motor as Motor
-import subsystems.Subsystem as Subsystem
+from externals.Motor import Motor
+from subsystems.Subsystem import Subsystem
+import commands.TurretPID
 
 class TurretSubsystem(Subsystem):
-    
+    class TurretPIDConstants:
+        k_p = 0
+        k_i = 0
+        k_d = 0
+        
     def __init__(self):
         self.name = "TurretSubsystem"
-        self.turretMotor = Motor(3)
+        self.turret_motor = Motor(3)
         
-    def setPower(self, power):
-        self.turretMotor.set(power)
+    def set_power(self, power):
+        self.turret_motor.set(power)
         
-    def commandConflict(self, commands):
-        firstCommand = commands[0]
+    def command_conflict(self, commands):
+        first_command = commands[0]
+        types = self.get_types(commands)
+        
+        command_dict = {}
+        
+        for index in range(len(commands)):
+            command_dict[commands[index]] = types[index]
+            
+        print("command_dict", command_dict, len(command_dict))
+            
+        if(type(commands.TurretPID.TurretPID) in command_dict.values()):
+            commands = [command_dict.keys()[x] for x in range(len(command_dict.values())) 
+                           if command_dict.values()[x] is type(commands.TurretPID.TurretPID)]
+            
+        print("sorted commands", commands)
+        
         for command in commands:
-            if(command.getInitTime() < firstCommand.getInitTime()):
-                firstCommand = command
-        return firstCommand
+            
+            if(command.get_init_time() < first_command.get_init_time()):
+                first_command = command
+        return first_command
+    
+    def toString(self):
+        return self.name
+    
+turret = TurretSubsystem()
+
+if __name__ == "__main__":
+    turret.set_power(1)
+    print("Turret Motor Power: %f" % (turret.turret_motor.get_power()))

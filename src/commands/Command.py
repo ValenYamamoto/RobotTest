@@ -3,46 +3,65 @@ Created on Oct 3, 2019
 
 @author: Valen Yamamoto
 '''
-from datetime import datetime
-from subsystems import Subsystem
+from subsystems.Subsystem import Subsystem
+import time
+
 class Command:
         
     def __init__(self):    
         self.name = id(self)
-        self.initialize()
-
-    def initialize(self):
-        self.isInitialized = True
-        self.isSetUp = False
-        self.isExecuting = False
-        self.isFinished = False
-        self.requiredSubsystem = Subsystem()
-        self.initTime = datetime.timestamp()
+        self.required_subsystem = Subsystem()
+        self.is_initialized = True
+        self.is_set_up = False
+        self.is_executing = False
+        self.finished = False
+        self.init_time = time.time()
+        
         
     def requires(self, subsystem):
-        self.requiredSubsystem = subsystem
+        self.required_subsystem = subsystem
         
-    def getRequiredSubsystem(self):
-        return self.requiredSubsystem
+    def get_required_subsystem(self):
+        return self.required_subsystem
 
-    def setUp(self):
-        if(self.isInitialized):
+    def set_up(self):
+        if(self.is_initialized):
             #Do Stuff
-            break
-        self.isSetUp = True
+            print("Command Set Up")
+        self.is_set_up = True
     
-    def Execute(self):
-        if(self.isSetUp):
-            self.isExecuting = True
-            if(self.isFinished()):
-                break
-        self.isExecuting = False
+    def execute(self):
+        if(self.is_set_up):
+            self.is_executing = True
+            print("Command Execute")
+            if(self.is_finished()):
+                print("Command Finished")
+                self.is_executing = False
+            self.finished = True
         
-    def isFinished(self):
+    def is_finished(self):
+        print("is_finished = " + str(self.finished))
         return True
     
     def end(self):
+        print("End")
         return
     
-    def getInitTime(self):
-        return self.initTime
+    def get_init_time(self):
+        return self.init_time
+    
+    def toString(self):
+        return str(self.name)
+    
+    def __str__(self):
+        return self.toString()
+    
+if __name__ == "__main__":
+    command = Command()
+    command.set_up()
+    command.execute()
+    command.is_finished()
+    command.execute()
+    command.end()
+    print("Init time: %f" % (command.get_init_time()))
+    
