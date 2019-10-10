@@ -21,21 +21,33 @@ class TurretSubsystem(Subsystem):
         self.turret_motor.set(power)
         
     def command_conflict(self, commands):
+        print(commands)
         first_command = commands[0]
-        types = self.get_types(commands)
+        names = self.get_names(commands)
         
-        command_dict = {}
+        for name in names:
+            if("TurretPIDCommand" in name): 
+                for command in commands:
+                    if("TurretPIDCommand" not in command.get_name()):
+                        commands.pop(command)
+                
+            break
         
-        for index in range(len(commands)):
-            command_dict[commands[index]] = types[index]
-            
-        print("command_dict", command_dict, len(command_dict))
-            
-        if(type(commands.TurretPID.TurretPID) in command_dict.values()):
-            commands = [command_dict.keys()[x] for x in range(len(command_dict.values())) 
-                           if command_dict.values()[x] is type(commands.TurretPID.TurretPID)]
-            
-        print("sorted commands", commands)
+        print(commands)
+        
+        
+#         command_dict = {}
+#         
+#         for index in range(len(commands)):
+#             command_dict[commands[index]] = name[index]
+#             
+#         print("command_dict", command_dict, len(command_dict))
+#             
+#         if(type(commands.TurretPID.TurretPID) in command_dict.values()):
+#             commands = [command_dict.keys()[x] for x in range(len(command_dict.values())) 
+#                            if command_dict.values()[x] is type(commands.TurretPID.TurretPID)]
+#             
+#         print("sorted commands", commands)
         
         for command in commands:
             

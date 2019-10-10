@@ -6,6 +6,7 @@ Created on Oct 8, 2019
 from commands.Command import Command
 from subsystems.TurretSubsystem import turret
 from algorithms.PID import PID
+import time
 
 class TurretPID(Command):
     
@@ -14,8 +15,15 @@ class TurretPID(Command):
         
         self.requires(turret)
         
-        self.name = "Turret PID Command" + str(id(self))
+        self.name = "TurretPIDCommand" + str(id(self))
+        
         self.setpoint = setpoint
+        self.is_initialized = True
+        self.is_set_up = False
+        self.is_executing = False
+        self.finished = False
+        self.init_time = time.time()
+        
         self.pid_controller = PID(turret.TurretPIDConstants.k_p,
                                   turret.TurretPIDConstants.k_i,
                                   turret.TurretPIDConstants.k_d,

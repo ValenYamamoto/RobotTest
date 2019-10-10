@@ -56,6 +56,9 @@ class Command:
     def __str__(self):
         return self.toString()
     
+    def get_name(self):
+        return self.name
+    
 if __name__ == "__main__":
     command = Command()
     command.set_up()

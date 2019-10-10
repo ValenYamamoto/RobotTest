@@ -3,8 +3,9 @@ Created on Oct 7, 2019
 
 @author: Valen Yamamoto
 '''
-import commands.Command as Command
+from commands.Command import Command
 from subsystems.TurretSubsystem import turret
+import time
 
 class RotateTurret(Command):
     
@@ -13,8 +14,13 @@ class RotateTurret(Command):
         
         self.requires(turret)
         
-        self.name = "Turret Command" + str(id(self))
+        self.name = "TurretCommand" + str(id(self))
         self.power = power
+        self.is_initialized = True
+        self.is_set_up = False
+        self.is_executing = False
+        self.finished = False
+        self.init_time = time.time()
         
     def setUp(self):
         if(self.isInitialized):

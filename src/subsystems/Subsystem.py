@@ -16,6 +16,12 @@ class Subsystem:
             type_list.append(type(x))
         return type_list
     
+    def get_names(self, l):
+        type_list = []
+        for x in l:
+            type_list.append(x.get_name())
+        return type_list
+    
     def command_conflict(self, commands):
         first_command = commands[0]
         for command in commands:
