@@ -29,7 +29,7 @@ class TurretSubsystem(Subsystem):
             if("TurretPIDCommand" in name): 
                 for command in commands:
                     if("TurretPIDCommand" not in command.get_name()):
-                        commands.pop(command)
+                        commands.remove(command)
                 
             break
         

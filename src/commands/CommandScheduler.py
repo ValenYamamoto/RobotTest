@@ -15,8 +15,9 @@ class CommandScheduler:
         self.input_commands.append(command)
     
     def schedule_commands(self):
+        print(self.input_commands)
         for command in self.input_commands:
-            if(command.get_required_subsystem in self.sorted_commands.keys()):
+            if(id(command.get_required_subsystem()) in self.get_ids(self.sorted_commands.keys())):
                 print("Subsystem in", command)
                 self.sorted_commands[command.get_required_subsystem()].append(command)
             else:
@@ -40,5 +41,10 @@ class CommandScheduler:
             else:
                 command.execute()
                 
+    def get_ids(self, l):
+        type_list = []
+        for x in l:
+            type_list.append(id(x))
+        return type_list
     
     
