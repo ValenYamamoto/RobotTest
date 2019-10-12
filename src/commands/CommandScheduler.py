@@ -18,13 +18,13 @@ class CommandScheduler:
         print(self.input_commands)
         for command in self.input_commands:
             if(id(command.get_required_subsystem()) in self.get_ids(self.sorted_commands.keys())):
-                print("Subsystem in", command)
+#                 print("Subsystem in", command)
                 self.sorted_commands[command.get_required_subsystem()].append(command)
             else:
-                print("Subsystem NOT in", command)
+#                 print("Subsystem NOT in", command)
                 self.sorted_commands[command.get_required_subsystem()] = [command]
             
-        print(self.sorted_commands)
+        print("\n\n", self.sorted_commands, sep = "")
         
         for subsystem in self.sorted_commands.keys():
             self.scheduled_commands[subsystem] = subsystem.command_conflict(self.sorted_commands[subsystem])

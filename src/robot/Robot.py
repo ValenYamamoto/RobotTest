@@ -11,22 +11,32 @@ from commands.DriveForwardRotate import DriveForwardRotate
 from commands.TurretPID import TurretPID
 from commands.RotateTurret import RotateTurret
 import time
+from commands.DrivetrainPID import DrivetrainPID
 
 scheduler = CommandScheduler()
 
 drive_command_1 = DriveForwardRotate(1, 1)
 drive_command_2 = DriveForwardRotate(0, 0)
 
+drivePID = DrivetrainPID(0)
+print("Instantiating DrivePID 1 at", str(id(drivePID)), "at time", drivePID.get_init_time())
+
+drivePID1 = DrivetrainPID(0)
+print("Instantiating DrivePID 2 at", str(id(drivePID1)), "at time", drivePID.get_init_time())
+
+drivePID2 = DrivetrainPID(0)
+print("Instantiating DrivePID 3 at", str(id(drivePID2)), "at time", drivePID.get_init_time())
+
+drivePID3 = DrivetrainPID(0)
+print("Instantiating DrivePID 4 at", str(id(drivePID3)), "at time", drivePID.get_init_time())
+
 scheduler.add_command(drive_command_1)
 scheduler.add_command(drive_command_2)
+scheduler.add_command(drivePID)
+scheduler.add_command(drivePID1)
+scheduler.add_command(drivePID2)
+scheduler.add_command(drivePID3)
 
-for key in scheduler.input_commands:
-    
-    print(key)
-
-scheduler.schedule_commands()
-for key in scheduler.scheduled_commands.keys():
-    print(key, scheduler.scheduled_commands[key])
 # print(scheduler.scheduled_commands)
 
 turretPID = TurretPID(0)

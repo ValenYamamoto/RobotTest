@@ -5,7 +5,6 @@ Created on Oct 3, 2019
 '''
 from externals.Motor import Motor
 from subsystems.Subsystem import Subsystem
-import commands.TurretPID
 
 class TurretSubsystem(Subsystem):
     class TurretPIDConstants:
@@ -30,27 +29,9 @@ class TurretSubsystem(Subsystem):
                 for command in commands:
                     if("TurretPIDCommand" not in command.get_name()):
                         commands.remove(command)
-                
             break
-        
-        print(commands)
-        
-        
-#         command_dict = {}
-#         
-#         for index in range(len(commands)):
-#             command_dict[commands[index]] = name[index]
-#             
-#         print("command_dict", command_dict, len(command_dict))
-#             
-#         if(type(commands.TurretPID.TurretPID) in command_dict.values()):
-#             commands = [command_dict.keys()[x] for x in range(len(command_dict.values())) 
-#                            if command_dict.values()[x] is type(commands.TurretPID.TurretPID)]
-#             
-#         print("sorted commands", commands)
-        
+                
         for command in commands:
-            
             if(command.get_init_time() < first_command.get_init_time()):
                 first_command = command
         return first_command
