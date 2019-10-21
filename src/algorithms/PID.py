@@ -10,6 +10,8 @@ class PID:
         self.k_i = k_i
         self.k_d = k_d
         self.is_absolute_tolerance = True
+        self.absolute_tolerance = 0
+        self.percent_tolerance = 0
         self.name = name + str(id(self))
         
     def set_k_p(self, k_p):
@@ -67,11 +69,13 @@ class PID:
         self.last_val = current
         
         if(self.is_finished is True or self.is_within_tolerance(current) is True):
+            print("IS FINISHED OR WITHIN TOLERANCE")
             return 0
         return self.k_p * error + self.k_i * self.integral + self.k_d * derivative
         
     def is_within_tolerance(self, current):
         if(abs(current - self.setpoint) < self.tolerance):
+            self.is_finished = True
             return True
         return False
         

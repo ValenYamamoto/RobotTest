@@ -75,7 +75,13 @@ for key in scheduler.scheduled_commands.keys():
     print(key, scheduler.scheduled_commands[key])
 
 
+def execute_loop():
+    #stuff here
+    
+    scheduler.schedule_commands()
+    scheduler.execute_commands()
+
 
 # drivetrain.drive_fwd_rot(1, 1)
 # turret.set_power(1)
-
+        

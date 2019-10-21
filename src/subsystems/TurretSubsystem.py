@@ -8,7 +8,7 @@ from subsystems.Subsystem import Subsystem
 
 class TurretSubsystem(Subsystem):
     class TurretPIDConstants:
-        k_p = 0
+        k_p = 0.1
         k_i = 0
         k_d = 0
         
@@ -18,6 +18,9 @@ class TurretSubsystem(Subsystem):
         
     def set_power(self, power):
         self.turret_motor.set(power)
+        
+    def get_power(self):
+        self.turret_motor.get_power()
         
     def command_conflict(self, commands):
         print(commands)
@@ -36,6 +39,12 @@ class TurretSubsystem(Subsystem):
                 first_command = command
         return first_command
     
+    def get_position(self):
+        return self.pos
+    
+    def set_position(self, position):
+        self.pos = position
+        
     def toString(self):
         return self.name
     
