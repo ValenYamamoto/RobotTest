@@ -56,7 +56,8 @@ class PID:
         self.last_val = 0
         self.setpoint = setpoint
         
-        if(self.is_absolute_tolerance is True):
+        if(self.is_absolute_tolerance):
+            print("setting tolerance")
             self.tolerance = self.absolute_tolerance
         else:
             self.tolerance = self.percent_tolerance * self.setpoint
@@ -71,10 +72,12 @@ class PID:
         if(self.is_finished is True or self.is_within_tolerance(current) is True):
             print("IS FINISHED OR WITHIN TOLERANCE")
             return 0
+        
         return self.k_p * error + self.k_i * self.integral + self.k_d * derivative
         
     def is_within_tolerance(self, current):
-        if(abs(current - self.setpoint) < self.tolerance):
+        print(abs(current - self.setpoint), self.tolerance)
+        if(abs(current - self.setpoint) <= self.tolerance):
             self.is_finished = True
             return True
         return False

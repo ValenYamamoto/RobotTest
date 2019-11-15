@@ -33,22 +33,22 @@ class TurretPID(Command):
         
     def set_up(self):
         if(self.is_initialized):
-            self.pid_controller.PID_setup(self.setpoint)
             self.pid_controller.set_absolute_tolerance(1)
+            self.pid_controller.PID_setup(self.setpoint)
         self.is_set_up = True
     
     def execute(self):
         if(self.is_set_up):
             self.is_executing = True
             turret.set_power(self.pid_controller.get_PID_output(turret.get_position()))
-            print("PID output:", self.pid_controller.get_PID_output(turret.get_position()))
-            print("Turret Power:", turret.get_power())
+#             print("PID output:", self.pid_controller.get_PID_output(turret.get_position()))
+#             print("Turret Power:", turret.get_power())
             if(self.is_finished()):
                 print("Finished")
                 self.isExecuting = False
         
     def is_finished(self):
-        print("IN IS FINISHED")
+#         print("IN IS FINISHED", turret.get_position(), self.pid_controller.is_within_tolerance(turret.get_position()))
         return self.pid_controller.is_within_tolerance(turret.get_position())
     
     def end(self):
@@ -60,11 +60,17 @@ if __name__ == "__main__":
     print("Current Position:", turret.get_position())
     pid.set_up()
     pid.execute()
+    print()
+    
     turret.set_position(45)
     print("Current Position:", turret.get_position())
     pid.execute()
-    turret.set_position(90)
+    print()
+    
+    turret.set_position(89.6)
     print("Current Position:", turret.get_position())
     pid.execute()
+    print()
+    
     pid.execute()
     

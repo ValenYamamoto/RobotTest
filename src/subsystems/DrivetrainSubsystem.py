@@ -42,7 +42,6 @@ class DrivetrainSubsystem(Subsystem):
         names = self.get_names(commands)
         
         for name in names:
-            print("Here: ", name)
             if(self.PID_command_name in name): 
                 print("Command name match")
                 for command in commands:
