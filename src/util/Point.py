@@ -33,4 +33,7 @@ class Point:
     
     def heading_diff(self, point2):
         return point2.get_heading() - self.heading
+
+    def __repr__(self):
+        return "(%.2f, %.2f)" % (self.get_x(), self.get_y())
     
