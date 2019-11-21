@@ -97,12 +97,15 @@ class Spline:
         gamma_array = self.get_gamma_array()
         
         array = []
-        array.append(rho_array[-1])
+#         array.append(rho_array[-1])
+        array.append(u_array[-1]/v_array[-1])
         
         for i in range(len(self.points) - 2):
             i += 2
-            array.append((u_array[-i + 1] - h_array[-i] * rho_array[-i])/ (v_array[-i + 1] - h_array[-i] * gamma_array[-i]) * array[i - 2])
+            array.append((u_array[-i + 1] - h_array[-i] * array[i - 2]) / v_array[-i + 1])
+#             array.append((u_array[-i + 1] - h_array[-i] * rho_array[-i])/ (v_array[-i + 1] - h_array[-i] * gamma_array[-i]) * array[i - 2])
         
+#         return [0] + array
         return [0] + array[::-1]
     
     def get_si_array(self):
@@ -115,9 +118,10 @@ class Spline:
         d = []
         
         for i in range(len(z_array) - 1):
-            print(i)
+#             print(i)
             a.append(z_array[i+1]/ (6 * h_array[i]))
             b.append(z_array[i] / (6 * h_array[i]))
+#             b.append(0)
             c.append(points[i + 1].get_y()/h_array[i] - z_array[i + 1] * h_array[i]/6)
             d.append(points[i].get_y()/h_array[i] - h_array[i] * z_array[i] / 6)
             
@@ -133,6 +137,7 @@ class Spline:
         
         for i in range(1, len(points)):
             x = points[i-1].get_x()
+            self.print_formula(points[i-1], points[i], co[0][i-1], co[1][i-1], co[2][i-1], co[3][i-1] )
             while x <= points[i].get_x():
                 x_array.append(x)
                 y = co[0][i-1] * ((x - points[i-1].get_x()) ** 3) + co[1][i-1] * ((points[i].get_x() - x) ** 3) + \
@@ -140,7 +145,10 @@ class Spline:
                 y_array.append(y)
                 x += step
         return x_array, y_array
-          
+    
+    def print_formula(self, point, n, a, b, c, d):
+        print("S(x) = %.2f(x - %.2f)^3 + %.2f(%.2f - x)^3 + %.2f(x- %.2f) + %.2f(%.2f - x)" % (a, point.get_x(), b, n.get_x(), c, point.get_x(), d, n.get_x()))
+        
 if __name__ == "__main__":
     points = []
     def get_cubic_curvature(x):
@@ -174,6 +182,29 @@ if __name__ == "__main__":
     
     x = [0.9, 1.3, 1.9, 2.1]
     y = [1.3, 1.5, 1.85, 2.1]
+    plot.subplot(2,1,1)
+    plot.plot(x, y)
+
+    print(spline.get_si_array())
+    print(spline.generate_spline(0.1))
+    x, y = spline.generate_spline(0.1)
+    
+    plot.subplot(2,1,2)
+    plot.plot(x,y)
+    plot.show()
+    
+    points = [Point(-1, -1), Point(0, -5), Point(1, 1)]
+    spline = Spline(points)
+    
+    print("h array", spline.get_h_array())
+    print("v array", spline.get_v_array())
+    print("u array", spline.get_u_array())
+    print("gamma array", spline.get_gamma_array())
+    print("rho array", spline.get_rho_array())
+    print("z array", spline.get_z_array())
+    
+    x = [-1, 0, 1]
+    y = [-1, -5, 1]
     plot.subplot(2,1,1)
     plot.plot(x, y)
 
