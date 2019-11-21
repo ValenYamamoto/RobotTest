@@ -8,15 +8,25 @@ import matplotlib.pyplot as plot
 from util.Point import Point
 from cmath import sqrt
 class Spline:
+    _spline = ()
     
-    def __init__(self, points):
+    def get_spline(self):
+        """Return spline. If not generated yet, creates spline and returns."""
+        if not self._spline:
+            _spline = self.generate_spline(self.step)
+        return _spline
+    
+    spline = property(get_spline)
+        
+    def __init__(self, points, step=0.1):
         self.points = points
+        self.step = step
         
     def get_hi(self, i):
-        return self.points[i+1].get_x() - self.points[i].get_x()
+        return self.points[i+1].x - self.points[i].x
     
     def get_bi(self, i):
-        return (1/self.get_hi(i)) * (self.points[i+1].get_y() - self.points[i].get_y())
+        return (1/self.get_hi(i)) * (self.points[i+1].y - self.points[i].y)
     
     def get_vi(self, i):
         return 2 * (self.get_hi(i-1) + self.get_hi(i))
@@ -122,8 +132,8 @@ class Spline:
             a.append(z_array[i+1]/ (6 * h_array[i]))
             b.append(z_array[i] / (6 * h_array[i]))
 #             b.append(0)
-            c.append(points[i + 1].get_y()/h_array[i] - z_array[i + 1] * h_array[i]/6)
-            d.append(points[i].get_y()/h_array[i] - h_array[i] * z_array[i] / 6)
+            c.append(points[i + 1].y/h_array[i] - z_array[i + 1] * h_array[i]/6)
+            d.append(points[i].y/h_array[i] - h_array[i] * z_array[i] / 6)
             
         return a, b, c, d
         
@@ -136,18 +146,18 @@ class Spline:
         
         
         for i in range(1, len(points)):
-            x = points[i-1].get_x()
+            x = points[i-1].x
             self.print_formula(points[i-1], points[i], co[0][i-1], co[1][i-1], co[2][i-1], co[3][i-1] )
-            while x <= points[i].get_x():
+            while x <= points[i].x:
                 x_array.append(x)
-                y = co[0][i-1] * ((x - points[i-1].get_x()) ** 3) + co[1][i-1] * ((points[i].get_x() - x) ** 3) + \
-                co[2][i-1] * (x - points[i-1].get_x()) + co[3][i-1] * (points[i].get_x() - x)
+                y = co[0][i-1] * ((x - points[i-1].x) ** 3) + co[1][i-1] * ((points[i].x - x) ** 3) + \
+                co[2][i-1] * (x - points[i-1].x) + co[3][i-1] * (points[i].x - x)
                 y_array.append(y)
                 x += step
         return x_array, y_array
     
     def print_formula(self, point, n, a, b, c, d):
-        print("S(x) = %.2f(x - %.2f)^3 + %.2f(%.2f - x)^3 + %.2f(x- %.2f) + %.2f(%.2f - x)" % (a, point.get_x(), b, n.get_x(), c, point.get_x(), d, n.get_x()))
+        print("S(x) = %.2f(x - %.2f)^3 + %.2f(%.2f - x)^3 + %.2f(x- %.2f) + %.2f(%.2f - x)" % (a, point.x, b, n.x, c, point.x, d, n.x))
         
 if __name__ == "__main__":
     points = []
@@ -193,7 +203,7 @@ if __name__ == "__main__":
     plot.plot(x,y)
     plot.show()
     
-    points = [Point(-1, -1), Point(0, -5), Point(1, 1)]
+    points = [Point(-2, -8), Point(-1, -1), Point(0, 0), Point(1, 1), Point(2, 8)]
     spline = Spline(points)
     
     print("h array", spline.get_h_array())
@@ -203,14 +213,14 @@ if __name__ == "__main__":
     print("rho array", spline.get_rho_array())
     print("z array", spline.get_z_array())
     
-    x = [-1, 0, 1]
-    y = [-1, -5, 1]
+    x = [-2, -1, 0, 1, 2]
+    y = [-8, -1, 0, 1, 8]
     plot.subplot(2,1,1)
     plot.plot(x, y)
 
     print(spline.get_si_array())
     print(spline.generate_spline(0.1))
-    x, y = spline.generate_spline(0.1)
+    x, y = spline.spline
     
     plot.subplot(2,1,2)
     plot.plot(x,y)
