@@ -3,7 +3,7 @@ Created on Nov 21, 2019
 
 @author: Valen Yamamoto
 '''
-from cmath import sqrt
+from math import sqrt
 class Waypoint:
     
     def __init__(self, x, y, curv, t_vel, dist):
@@ -45,9 +45,16 @@ class Waypoint:
         
     def get_distance(self, waypoint):
         return sqrt((self.x - waypoint.x) ** 2 + (self.y - waypoint.y) ** 2)
+    
     x = property(get_x, set_x)
     y = property(get_y, set_y)
     curv = property(get_curv, set_curv)
     vel = property(get_vel, set_vel)
     dist = property(get_dist, set_dist)
+    
+    def __str__(self):
+        return "(%.2f, %.2f), k=%.2f, d=%.2f, v=%.2f" % (self._x, self._y, self._curv, self._dist, self._t_vel)
+    
+    def __repr__(self):
+        return "(%.2f, %.2f), k=%.2f, d=%.2f, v=%.2f" % (self._x, self._y, self._curv, self._dist, self._t_vel)
     

@@ -3,25 +3,27 @@ Created on Oct 16, 2019
 
 @author: Valen Yamamoto
 '''
-import numpy as np
 import matplotlib.pyplot as plot
 from util.Point import Point
-from cmath import sqrt
+from math import sin, cos
+
 class Spline:
     _spline = ()
     
-    def get_spline(self):
-        """Return spline. If not generated yet, creates spline and returns."""
-        if not self._spline:
-            _spline = self.generate_spline(self.step)
-        return _spline
-    
-    spline = property(get_spline)
         
     def __init__(self, points, step=0.1):
         self.points = points
         self.step = step
         
+    def get_spline(self):
+        """Return spline. If not generated yet, creates spline and returns."""
+        if not self._spline:
+            print("generating spline")
+            self._spline = self.generate_spline(self.step)
+        return self._spline
+    
+    spline = property(get_spline)
+    
     def get_hi(self, i):
         return self.points[i+1].x - self.points[i].x
     
@@ -100,11 +102,9 @@ class Spline:
         return array
     
     def get_z_array(self):
-        rho_array = self.get_rho_array()
         h_array = self.get_h_array()
         u_array = self.get_u_array()
         v_array = self.get_v_array()
-        gamma_array = self.get_gamma_array()
         
         array = []
 #         array.append(rho_array[-1])
@@ -132,32 +132,43 @@ class Spline:
             a.append(z_array[i+1]/ (6 * h_array[i]))
             b.append(z_array[i] / (6 * h_array[i]))
 #             b.append(0)
-            c.append(points[i + 1].y/h_array[i] - z_array[i + 1] * h_array[i]/6)
-            d.append(points[i].y/h_array[i] - h_array[i] * z_array[i] / 6)
+            c.append(self.points[i + 1].y/h_array[i] - z_array[i + 1] * h_array[i]/6)
+            d.append(self.points[i].y/h_array[i] - h_array[i] * z_array[i] / 6)
             
         return a, b, c, d
         
     def generate_spline(self, step):
         co = self.get_si_array()
         
-        x = points[0].get_x()
+        x = self.points[0].get_x()
         x_array = []
         y_array = []
         
         
-        for i in range(1, len(points)):
-            x = points[i-1].x
-            self.print_formula(points[i-1], points[i], co[0][i-1], co[1][i-1], co[2][i-1], co[3][i-1] )
-            while x <= points[i].x:
+        for i in range(1, len(self.points)):
+            x = self.points[i-1].x
+            self.print_formula(self.points[i-1], self.points[i], co[0][i-1], co[1][i-1], co[2][i-1], co[3][i-1] )
+            while abs(self.points[i].x - x) > self.step / 2:
                 x_array.append(x)
-                y = co[0][i-1] * ((x - points[i-1].x) ** 3) + co[1][i-1] * ((points[i].x - x) ** 3) + \
-                co[2][i-1] * (x - points[i-1].x) + co[3][i-1] * (points[i].x - x)
+                y = co[0][i-1] * ((x - self.points[i-1].x) ** 3) + co[1][i-1] * ((self.points[i].x - x) ** 3) + \
+                co[2][i-1] * (x - self.points[i-1].x) + co[3][i-1] * (self.points[i].x - x)
                 y_array.append(y)
-                x += step
+                sign = -1 if self.points[i].x - self.points[i-1].x < 0 else 1
+                x += step * sign
+        # Appending Endpoint
+        x_array.append(self.points[-1].x)
+        y_array.append(self.points[-1].y)
         return x_array, y_array
     
     def print_formula(self, point, n, a, b, c, d):
         print("S(x) = %.2f(x - %.2f)^3 + %.2f(%.2f - x)^3 + %.2f(x- %.2f) + %.2f(%.2f - x)" % (a, point.x, b, n.x, c, point.x, d, n.x))
+        
+    def __repr__(self):
+        s = ""
+        print(len(self._spline))
+        for i in range(len(self._spline[0])):
+            s += "(%.2f, %.2f)\n" % (self._spline[0][i], self._spline[1][i])
+        return s
         
 if __name__ == "__main__":
     points = []
@@ -190,38 +201,67 @@ if __name__ == "__main__":
     print("rho array", spline.get_rho_array())
     print("z array", spline.get_z_array())
     
-    x = [0.9, 1.3, 1.9, 2.1]
-    y = [1.3, 1.5, 1.85, 2.1]
-    plot.subplot(2,1,1)
-    plot.plot(x, y)
-
-    print(spline.get_si_array())
-    print(spline.generate_spline(0.1))
-    x, y = spline.generate_spline(0.1)
+#     x = [0.9, 1.3, 1.9, 2.1]
+#     y = [1.3, 1.5, 1.85, 2.1]
+#     plot.subplot(2,1,1)
+#     plot.plot(x, y)
+#  
+#     print(spline.get_si_array())
+#     print(spline.generate_spline(0.1))
+#     x, y = spline.generate_spline(0.1)
+#      
+#     plot.subplot(2,1,2)
+#     plot.plot(x,y)
+#     plot.show()
     
-    plot.subplot(2,1,2)
-    plot.plot(x,y)
-    plot.show()
     
-    points = [Point(-2, -8), Point(-1, -1), Point(0, 0), Point(1, 1), Point(2, 8)]
+    
+#     print("h array", spline.get_h_array())
+#     print("v array", spline.get_v_array())
+#     print("u array", spline.get_u_array())
+#     print("gamma array", spline.get_gamma_array())
+#     print("rho array", spline.get_rho_array())
+#     print("z array", spline.get_z_array())
+    
+#     x = [-2, -1, 0, 1, 2]
+#     y = [-8, 10, 0, -10, 8]
+    x = [i for i in range(-7, 7)]
+    y = [sin(i) * cos(i) for i in x]
+    
+    c = [(i + 2) for i in y]
+    d = [i - 2 for i in y]
+    
+    print(c)
+    points = [Point(x[i], y[i]) for i in range(len(x))]
+    left = [Point(x[i], c[i]) for i in range(len(x))]
+    right = [Point(x[i], d[i]) for i in range(len(x))]
+    
+    print(points)
     spline = Spline(points)
     
-    print("h array", spline.get_h_array())
-    print("v array", spline.get_v_array())
-    print("u array", spline.get_u_array())
-    print("gamma array", spline.get_gamma_array())
-    print("rho array", spline.get_rho_array())
-    print("z array", spline.get_z_array())
+    right_spline = Spline(right)
+    left_spline = Spline(left)
     
-    x = [-2, -1, 0, 1, 2]
-    y = [-8, -1, 0, 1, 8]
-    plot.subplot(2,1,1)
-    plot.plot(x, y)
+    plot.subplot(3,1,1)
+    plot.scatter(x, y, marker='^')
 
-    print(spline.get_si_array())
-    print(spline.generate_spline(0.1))
-    x, y = spline.spline
+#     print(spline.get_si_array())
+    print("\n\nMAIN SPLINE")
+    a, b = spline.spline
+    print("\n\nAGAIN")
+    a, b = spline.spline
+    print()
     
-    plot.subplot(2,1,2)
-    plot.plot(x,y)
+    plot.subplot(3,1,2)
+    plot.scatter(a,b)
+    
+    plot.subplot(3,1,3)
+    plot.plot(x, y, marker='^')
+    plot.plot(a, b)
+    plot.plot(*right_spline.spline)
+    print("\n\nLEFT SPLINE")
+    plot.plot(*left_spline.spline)
+    print("\n\nAGAIN")
+    print(left_spline)
     plot.show()
+    

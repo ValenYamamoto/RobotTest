@@ -9,7 +9,7 @@ class PurePursuit():
     
     wheelbase = 1
     
-    def __init__(self, x = 0, y = 0):
+    def __init__(self, x = 0, y = 0, heading=0, path=None):
         self.pos = Point(x, y)
         self.heading = 0
         
